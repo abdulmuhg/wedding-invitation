@@ -1,12 +1,8 @@
-group = "com.mrc"
-version = "1.0-SNAPSHOT"
-
 val ktor_version: String = "2.3.7"
 val kotlin_version: String = "1.9.22"
 val logback_version: String = "1.4.11"
 val exposed_version: String = "0.45.0"
 val postgresql_version: String = "42.7.1"
-
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -15,8 +11,11 @@ plugins {
     application
 }
 
+group = "com.mrc"
+version = "0.0.1"
+
 application {
-    mainClass.set("com.com.wedding.ApplicationKt")
+    mainClass.set("com.example.wedding.ApplicationKt")
 }
 
 repositories {
@@ -44,8 +43,4 @@ dependencies {
     // Testing
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
