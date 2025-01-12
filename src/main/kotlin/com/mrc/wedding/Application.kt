@@ -1,5 +1,8 @@
 package com.mrc.wedding
 
+import com.mrc.wedding.config.DatabaseConfig
+import com.mrc.wedding.routes.guestRoutes
+import com.mrc.wedding.routes.photoRoutes
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -13,6 +16,9 @@ fun main() {
 }
 
 fun Application.module() {
+    // Initialize database
+    DatabaseConfig.init()
+
     // Install plugins
     install(ContentNegotiation) {
         json()
@@ -23,5 +29,7 @@ fun Application.module() {
         get("/") {
             call.respondText("Welcome to Our Wedding!")
         }
+        guestRoutes()
+        photoRoutes()
     }
 }

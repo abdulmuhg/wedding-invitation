@@ -35,10 +35,15 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("org.postgresql:postgresql:$postgresql_version")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
+
+    // AWS
+    implementation("aws.sdk.kotlin:s3:0.24.0-beta")
+    implementation("aws.sdk.kotlin:aws-core:0.24.0-beta")
 
     // Testing
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
