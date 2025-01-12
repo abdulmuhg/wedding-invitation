@@ -9,15 +9,19 @@ import io.ktor.server.routing.*
 import io.ktor.server.response.*
 
 fun main() {
-    embeddedServer(Netty, port = 8080) {
-        install(ContentNegotiation) {
-            json()
+    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+}
+
+fun Application.module() {
+    // Install plugins
+    install(ContentNegotiation) {
+        json()
+    }
+
+    // Configure routing
+    routing {
+        get("/") {
+            call.respondText("Welcome to Our Wedding!")
         }
-        
-        routing {
-            get("/") {
-                call.respondText("Welcome to Our Wedding!")
-            }
-        }
-    }.start(wait = true)
+    }
 }
