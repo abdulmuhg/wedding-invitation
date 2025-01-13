@@ -48,3 +48,5 @@ bin/
 
 postgres_data/
 .env
+
+!**/src/main/resources/application.conf

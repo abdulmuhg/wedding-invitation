@@ -4,6 +4,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.mrc.wedding.models.tables.Guests
+import com.mrc.wedding.models.tables.Photos
 
 object DatabaseConfig {
     fun init() {
@@ -20,7 +21,7 @@ object DatabaseConfig {
 
         // Create tables
         transaction {
-            SchemaUtils.create(Guests)
+            SchemaUtils.create(Guests, Photos)
         }
     }
 }

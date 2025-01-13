@@ -3,6 +3,7 @@ package com.mrc.wedding
 import com.mrc.wedding.config.DatabaseConfig
 import com.mrc.wedding.routes.guestRoutes
 import com.mrc.wedding.routes.photoRoutes
+import com.mrc.wedding.services.AWSConfig
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -19,6 +20,8 @@ fun Application.module() {
     // Initialize database
     DatabaseConfig.init()
 
+    val awsConfig = AWSConfig.fromEnv()
+
     // Install plugins
     install(ContentNegotiation) {
         json()
@@ -30,6 +33,6 @@ fun Application.module() {
             call.respondText("Welcome to Our Wedding!")
         }
         guestRoutes()
-        photoRoutes()
+        photoRoutes(awsConfig)
     }
 }
