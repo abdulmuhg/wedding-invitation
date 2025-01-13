@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 object Guests : Table() {
     val id = integer("id").autoIncrement()
+    val weddingId = integer("wedding_id").references(Weddings.id)
     val name = varchar("name", 255)
     val email = varchar("email", 255)
     val invitationCode = varchar("invitation_code", 50).uniqueIndex()

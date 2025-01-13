@@ -25,30 +25,31 @@ data class RSVPRequest(
 fun Route.guestRoutes() {
     val repository = GuestRepository()
 
-    route("/api/guests") {
-        // Create new guest
-        post {
-            try {
-                val request = call.receive<CreateGuestRequest>()
-                val invitationCode = generateInvitationCode() // We'll implement this
+    route("/api/weddings/{weddingId}/guests") {
+        get {
+            val weddingId = call.parameters["weddingId"]?.toIntOrNull()
+                ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid wedding ID")
 
-                val guestId = repository.createGuest(
-                    name = request.name,
-                    email = request.email,
-                    invitationCode = invitationCode
-                )
-
-                val guest = repository.findByInvitationCode(invitationCode)
-                call.respond(HttpStatusCode.Created, guest!!)
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
-            }
+            val guests = repository.getAllGuests(weddingId)
+            call.respond(guests)
         }
 
-        // Get all guests (admin endpoint)
-        get {
-            val guests = repository.getAllGuests()
-            call.respond(guests)
+        post {
+            val weddingId = call.parameters["weddingId"]?.toIntOrNull()
+                ?: return@post call.respond(HttpStatusCode.BadRequest, "Invalid wedding ID")
+
+            val request = call.receive<CreateGuestRequest>()
+            val invitationCode = generateInvitationCode()
+
+            val guestId = repository.createGuest(
+                weddingId = weddingId,
+                name = request.name,
+                email = request.email,
+                invitationCode = invitationCode
+            )
+
+            val guest = repository.findByInvitationCode(invitationCode)
+            call.respond(HttpStatusCode.Created, guest!!)
         }
 
         // RSVP endpoint

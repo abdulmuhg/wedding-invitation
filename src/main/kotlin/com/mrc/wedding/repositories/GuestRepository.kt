@@ -7,9 +7,10 @@ import java.time.LocalDateTime
 
 class GuestRepository {
     // Create new guest
-    fun createGuest(name: String, email: String, invitationCode: String): Int {
+    fun createGuest(weddingId: Int, name: String, email: String, invitationCode: String): Int {
         return transaction {
             Guests.insert {
+                it[Guests.weddingId] = weddingId
                 it[Guests.name] = name
                 it[Guests.email] = email
                 it[Guests.invitationCode] = invitationCode
@@ -20,18 +21,21 @@ class GuestRepository {
     }
 
     // Get all guests
-    fun getAllGuests() = transaction {
-        Guests.selectAll().map { row ->
-            GuestDTO(
-                id = row[Guests.id],
-                name = row[Guests.name],
-                email = row[Guests.email],
-                invitationCode = row[Guests.invitationCode],
-                numberOfGuests = row[Guests.numberOfGuests],
-                isAttending = row[Guests.isAttending],
-                message = row[Guests.message]
-            )
-        }
+    fun getAllGuests(weddingId: Int) = transaction {
+        Guests
+            .select { Guests.weddingId eq weddingId }
+            .map { row ->
+                GuestDTO(
+                    id = row[Guests.id],
+                    weddingId = row[Guests.weddingId],
+                    name = row[Guests.name],
+                    email = row[Guests.email],
+                    invitationCode = row[Guests.invitationCode],
+                    numberOfGuests = row[Guests.numberOfGuests],
+                    isAttending = row[Guests.isAttending],
+                    message = row[Guests.message]
+                )
+            }
     }
 
     // Get guest by invitation code
@@ -40,6 +44,7 @@ class GuestRepository {
             .map { row ->
                 GuestDTO(
                     id = row[Guests.id],
+                    weddingId = row[Guests.weddingId],
                     name = row[Guests.name],
                     email = row[Guests.email],
                     invitationCode = row[Guests.invitationCode],
@@ -64,6 +69,7 @@ class GuestRepository {
 @kotlinx.serialization.Serializable
 data class GuestDTO(
     val id: Int,
+    val weddingId: Int,  // Add this
     val name: String,
     val email: String,
     val invitationCode: String,
