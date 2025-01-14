@@ -30,9 +30,12 @@ fun Route.photoRoutes(awsConfig: AWSConfig) {
     )
     val repository = PhotoRepository()
 
-    route("/api/photos") {
+    route("/api/weddings/{weddingId}/photos") {
         post {
             try {
+                val weddingId = call.parameters["weddingId"]?.toIntOrNull()
+                    ?: return@post call.respond(HttpStatusCode.BadRequest, "Invalid wedding ID")
+
                 val multipart = call.receiveMultipart()
                 var title = ""
                 var description: String? = null
@@ -49,10 +52,12 @@ fun Route.photoRoutes(awsConfig: AWSConfig) {
                                 "category" -> category = part.value
                             }
                         }
+
                         is PartData.FileItem -> {
                             photoBytes = part.streamProvider().readBytes()
                             contentType = part.contentType?.toString() ?: "image/jpeg"
                         }
+
                         else -> {}
                     }
                     part.dispose()
@@ -63,10 +68,19 @@ fun Route.photoRoutes(awsConfig: AWSConfig) {
 
                     if (result.isSuccess) {
                         val url = result.getOrNull()!!
-                        val photoId = repository.addPhoto(title, description, url, category)
+                        val photoId = repository.addPhoto(
+                            weddingId = weddingId,  // Add the wedding ID
+                            title = title,
+                            description = description,
+                            url = url,
+                            category = category
+                        )
                         call.respond(PhotoUploadResponse(id = photoId, url = url))
                     } else {
-                        call.respond(HttpStatusCode.InternalServerError, "Failed to upload photo: ${result.exceptionOrNull()?.message}")
+                        call.respond(
+                            HttpStatusCode.InternalServerError,
+                            "Failed to upload photo: ${result.exceptionOrNull()?.message}"
+                        )
                     }
                 } else {
                     call.respond(HttpStatusCode.BadRequest, ErrorResponse(message = "No photo provided"))
@@ -77,6 +91,9 @@ fun Route.photoRoutes(awsConfig: AWSConfig) {
         }
 
         get("/{category}") {
+            val weddingId = call.parameters["weddingId"]?.toIntOrNull()
+                ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid wedding ID")
+
             val category = call.parameters["category"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
                 ErrorResponse(message = "Category is required")

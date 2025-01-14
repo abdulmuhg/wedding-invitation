@@ -15,9 +15,16 @@ data class PhotoDTO(
 )
 
 class PhotoRepository {
-    fun addPhoto(title: String, description: String?, url: String, category: String): Int {
+    fun addPhoto(
+        weddingId: Int,  // Add this parameter
+        title: String,
+        description: String?,
+        url: String,
+        category: String
+    ): Int {
         return transaction {
             Photos.insert {
+                it[Photos.weddingId] = weddingId  // Set the wedding_id
                 it[Photos.title] = title
                 it[Photos.description] = description
                 it[Photos.url] = url

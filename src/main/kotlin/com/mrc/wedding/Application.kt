@@ -1,6 +1,7 @@
 package com.mrc.wedding
 
 import com.mrc.wedding.config.DatabaseConfig
+import com.mrc.wedding.routes.giftRoutes
 import com.mrc.wedding.routes.guestRoutes
 import com.mrc.wedding.routes.photoRoutes
 import com.mrc.wedding.services.AWSConfig
@@ -13,7 +14,12 @@ import io.ktor.server.routing.*
 import io.ktor.server.response.*
 
 fun main() {
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+    embeddedServer(
+        Netty,
+        port = 8080,
+        host = "0.0.0.0",
+        module = Application::module
+    ).start(wait = true)
 }
 
 fun Application.module() {
@@ -34,5 +40,6 @@ fun Application.module() {
         }
         guestRoutes()
         photoRoutes(awsConfig)
+        giftRoutes()
     }
 }
