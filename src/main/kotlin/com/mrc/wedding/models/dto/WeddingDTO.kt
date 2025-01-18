@@ -33,7 +33,10 @@ data class GiftDTO(
 
 @Serializable
 data class WishDTO(
+    val id: Int,
     val guestName: String,
     val message: String,
-    val date: String
+    val date: String,
+    val reactions: Map<String, Int> = mapOf(), // Map of reaction type to count
+    val myReaction: String? = null // Optional: to show the current user's reaction
 )

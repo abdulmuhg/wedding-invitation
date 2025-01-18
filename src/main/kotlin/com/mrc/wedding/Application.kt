@@ -1,9 +1,7 @@
 package com.mrc.wedding
 
 import com.mrc.wedding.config.DatabaseConfig
-import com.mrc.wedding.routes.giftRoutes
-import com.mrc.wedding.routes.guestRoutes
-import com.mrc.wedding.routes.photoRoutes
+import com.mrc.wedding.routes.*
 import com.mrc.wedding.services.AWSConfig
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -41,5 +39,9 @@ fun Application.module() {
         guestRoutes()
         photoRoutes(awsConfig)
         giftRoutes()
+        wishRoutes()
+        galleryRoutes()
+        wishReactionRoutes()
+        analyticsRoutes()
     }
 }

@@ -12,6 +12,10 @@ object Weddings : Table() {
     val groomLastName = varchar("groom_last_name", 100)
     val eventDate = datetime("event_date")
     val status = varchar("status", 20).default("ACTIVE")  // ACTIVE, INACTIVE, EXPIRED
+    val coverPhotoUrl = varchar("cover_photo_url", 500).nullable()
+    val quranVerse = text("quran_verse").nullable()  // For the Quran verse shown
+    val liveStreamUrl = varchar("live_stream_url", 500).nullable()
+    val websiteTheme = varchar("website_theme", 50).default("NETFLIX")
     val createdAt = datetime("created_at")
     val updatedAt = datetime("updated_at")
 

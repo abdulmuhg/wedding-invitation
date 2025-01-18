@@ -25,7 +25,10 @@ object DatabaseConfig {
                 WeddingEvents,
                 WeddingGifts,
                 Photos,
-                Guests
+                Guests,
+                WeddingWishes,
+                WishReactions,
+                GalleryAlbums,
             )
         }
     }

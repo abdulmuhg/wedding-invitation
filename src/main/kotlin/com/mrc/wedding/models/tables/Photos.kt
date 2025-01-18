@@ -10,6 +10,8 @@ object Photos : Table() {
     val description = text("description").nullable()
     val url = varchar("url", 500)
     val category = varchar("category", 50)
+    val albumId = integer("album_id").references(GalleryAlbums.id)
+    val orderIndex = integer("order_index")  // For controlling photo order in album
     val createdAt = datetime("created_at")
     val updatedAt = datetime("updated_at")
 

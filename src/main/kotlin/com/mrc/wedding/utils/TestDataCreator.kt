@@ -1,9 +1,7 @@
-package com.mrc.wedding
+package com.mrc.wedding.utils
 
 import com.mrc.wedding.config.DatabaseConfig
-import com.mrc.wedding.models.tables.*
 import com.mrc.wedding.repositories.*
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import java.util.UUID
@@ -13,16 +11,17 @@ fun main() {
     DatabaseConfig.init()
 
     // Clear existing data and recreate tables
-    transaction {
-        SchemaUtils.drop(Guests, Photos, WeddingEvents, WeddingGifts, Weddings)
-        SchemaUtils.create(Guests, Photos, WeddingEvents, WeddingGifts, Weddings)
-    }
+//    transaction {
+//        SchemaUtils.drop(Guests, Photos, WeddingEvents, WeddingGifts, Weddings)
+//        SchemaUtils.create(Guests, Photos, WeddingEvents, WeddingGifts, Weddings)
+//    }
 
     // Initialize repositories
     val weddingRepo = WeddingEventRepository()
     val guestRepo = GuestRepository()
     val photoRepo = PhotoRepository()
     val giftRepo = WeddingGiftRepository()
+    val wishRepo = WishRepository()
 
     // Create test data
     transaction {
@@ -36,8 +35,20 @@ fun main() {
                 eventDate = LocalDateTime.now().plusMonths(2),
                 slug = "john-and-jane-2024"
             )
-
             println("Created wedding with ID: $weddingId")
+
+            // Create gallery albums
+            val albumRepo = GalleryAlbumRepository()
+            val albumNames = listOf("Perfect Date", "Our Story", "Pre-Wedding")
+            val albumIds = albumNames.mapIndexed { index, name ->
+                albumRepo.createAlbum(
+                    weddingId = weddingId,
+                    title = name,
+                    description = "Photos from our $name",
+                    coverPhotoUrl = "https://example.com/cover-$index.jpg",
+                    orderIndex = index
+                )
+            }
 
             // Create events
             listOf(
@@ -81,18 +92,33 @@ fun main() {
                 println("Created guest $name with ID: $guestId")
             }
 
-            // Add photos
-            listOf("PRE_WEDDING", "CEREMONY", "RECEPTION").forEach { category ->
+            // Create photos
+            val categories = listOf("PRE_WEDDING", "CEREMONY", "RECEPTION")
+            categories.forEach { category ->
                 repeat(3) { index ->
                     photoRepo.addPhoto(
-                        weddingId = weddingId,  // Pass the wedding ID
+                        weddingId = weddingId,
                         title = "Test Photo ${index + 1}",
                         description = "Test photo in category $category",
                         url = "https://com-mrc-wedding-invitation-dev.s3.ap-southeast-1.amazonaws.com/photos/${UUID.randomUUID()}",
-                        category = category
+                        category = category,
+                        albumId = albumIds.random(),
+                        orderIndex = index
                     )
-                    println("Created photo for category: $category")
                 }
+                println("Created photo for category: $category")
+            }
+
+            listOf(
+                "Congratulations!" to "Best wishes for your future together!",
+                "Happy Wedding!" to "May your love grow stronger each day",
+                "Wonderful News!" to "So happy for both of you!"
+            ).forEach { (name, message) ->
+                wishRepo.createWish(
+                    weddingId = weddingId,
+                    guestName = name,
+                    message = message
+                )
             }
 
             println("Test data creation completed successfully!")
